@@ -4,6 +4,7 @@ import (
 	"errandify/config"
 	"errandify/models"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +16,6 @@ func main(){
 	db.AutoMigrate(&models.User{}, &models.Task{})
 	config.CreateOwnerAccount(db)
 
-
 	//router
 	router := gin.Default()
 	router.GET("/",func(ctx *gin.Context){
@@ -23,7 +23,11 @@ func main(){
 			"message": "Hello, World!, welcome to Errandify API",
 		})
 	})
-
 	router.Static("/attachment", "./attachment")
-	router.Run(":8080")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	router.Run(":"+port)
 }
