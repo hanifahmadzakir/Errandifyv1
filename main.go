@@ -3,6 +3,7 @@ package main
 import (
 	"errandify/config"
 	"errandify/models"
+	"errandify/controllers"
 	"net/http"
 	"os"
 
@@ -16,6 +17,9 @@ func main(){
 	db.AutoMigrate(&models.User{}, &models.Task{})
 	config.CreateOwnerAccount(db)
 
+	//controller
+	userController := controllers.UserController{DB: db}
+
 	//router
 	router := gin.Default()
 	router.GET("/",func(ctx *gin.Context){
@@ -23,6 +27,11 @@ func main(){
 			"message": "Hello, World!, welcome to Errandify API",
 		})
 	})
+
+	router.POST("/users/login", userController.Login)
+	router.POST("/users", userController.CreateAccount)
+	router.DELETE("/users/:id", userController.DeleteAccount)
+
 	router.Static("/attachment", "./attachment")
 
 	port := os.Getenv("PORT")
