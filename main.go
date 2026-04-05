@@ -19,6 +19,7 @@ func main(){
 
 	//controller
 	userController := controllers.UserController{DB: db}
+	taskController := controllers.TaskController{DB: db}
 
 	//router
 	router := gin.Default()
@@ -28,12 +29,22 @@ func main(){
 		})
 	})
 
+	//user router
 	router.POST("/users/login", userController.Login)
 	router.POST("/users", userController.CreateAccount)
 	router.DELETE("/users/:id", userController.DeleteAccount)
+	router.GET("/users/employee", userController.GetEmployees)
 
-	router.Static("/attachment", "./attachment")
+	//task router
+	router.POST("/tasks", taskController.CreateTask)
+	router.DELETE("/tasks/:id", taskController.DeleteTask)
+	router.PATCH("/tasks/:id/submit", taskController.SubmitTask)
+	router.PATCH("/tasks/:id/reject", taskController.RejectTask)
 
+	//attachment router
+	router.Static("/attachments", "./attachments")
+
+	//server config
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

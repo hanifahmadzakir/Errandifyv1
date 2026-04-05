@@ -12,10 +12,10 @@ type User struct {
 	Role      string    `gorm:"type:varchar(10)" json:"role"`
 	Name      string    `gorm:"type:varchar(255)" json:"name"`
 	Email     string    `gorm:"type:varchar(50)" json:"email"`
-	Password  string    `gorm:"type:varchar(255)" json:"password"`
+	Password  string    `gorm:"type:varchar(255)" json:"password,omitempty"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updateAt"`
-	Tasks     []Task    `gorm:"constraint:OnUpdate:CASCADE" json:"tasks,omitempty"` // has many Tasks
+	Tasks     []Task    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"tasks,omitempty"` // has many Tasks
 }
 
 func (u *User) AfterDelete(tx *gorm.DB) (err error) {

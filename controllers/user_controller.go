@@ -9,10 +9,12 @@ import (
 	"gorm.io/gorm"
 )
 
+//user controller struct
 type UserController struct {
 	DB *gorm.DB
 }
 
+//user login
 func(u *UserController) Login(ctx *gin.Context) {
 	user := models.User{}
 	errBindJson := ctx.ShouldBindJSON(&user)
@@ -49,6 +51,8 @@ func(u *UserController) Login(ctx *gin.Context) {
 
 }
 
+
+//create new account
 func(u *UserController) CreateAccount(ctx *gin.Context) {
 	user := models.User{}
 	errBindJson := ctx.ShouldBindJSON(&user)
@@ -83,6 +87,8 @@ func(u *UserController) CreateAccount(ctx *gin.Context) {
 
 }
 
+
+//delete existing account
 func(u *UserController) DeleteAccount(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -93,5 +99,19 @@ func(u *UserController) DeleteAccount(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"message": "user deleted successfully"})
+
+}
+
+//get all employee from DB
+func(u *UserController) GetEmployees(ctx *gin.Context) {
+	users := []models.User{}
+
+	errDB := u.DB.Select("id, email, name, role").Where("role=?", "Employee").Find(&users).Error
+	if errDB != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "failed to fetch employees"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, users)
 
 }
